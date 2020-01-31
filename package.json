@@ -1,0 +1,29 @@
+{
+  "name": "test-pagopa-chatserver",
+  "version": "1.0.0",
+  "description": "Chat server",
+  "main": "./src/server.js",
+  "exports": {
+    "./": "./src/"
+  },
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "start": "node src/index.js",
+    "test": "mocha"
+  },
+  "author": "Gianluca Moretti",
+  "dependencies": {
+    "chalk": "^2.4.2",
+    "config": "^3.2.5",
+    "figlet": "^1.2.4",
+    "uniqid": "^5.2.0",
+    "winston": "^3.2.1"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^7.0.1",
+    "nodemon": "^1.19.4",
+    "telnet-client": "^1.2.11",
+    "sleep": "^6.1.0"
+  }
+}
