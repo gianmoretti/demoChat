@@ -10,8 +10,9 @@ Libraries used:
 - [winston] - For logging purposes
 - [chalk] - For text formatting
 - [config] - For env vars configuration
-- [mocha] - Test framewiork
-- [chai] - For assertions
+- [mocha] - Test framewiork - test purposes
+- [chai] - For assertions - test purposes
+- [sinon] - Mocking framework - test purposes
 
 ### Installation
 

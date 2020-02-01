@@ -12,14 +12,14 @@ module.exports = class ChatServer {
     this.connectedUsers = {};
 
     this.server.on('connection', currentUser =>
-      this.managerConnectedUser(currentUser, this.connectedUsers)
+      this.manageUserOnConnection(currentUser, this.connectedUsers)
     );
     this.server.listen(this.port, this.address, () => {
       logger.info(`PagoPA chat server started!`);
     });
   }
 
-  managerConnectedUser(currentUser, connectedUsers) {
+  manageUserOnConnection(currentUser, connectedUsers) {
     currentUser.id = uniqid();
     logger.info(`User connected [id=${currentUser.id}]`);
 
@@ -42,32 +42,40 @@ module.exports = class ChatServer {
 
   processMessage(message, currentUser, connectedUsers) {
     if (!connectedUsers[currentUser.id]) {
-      const username = message.trim();
-      currentUser.name = username;
-
-      if (username) {
-        connectedUsers[currentUser.id] = currentUser;
-
-        currentUser.write(
-          chalk.green(`[ PagoPA Chatbot ] > Welcome ${username}!\n`)
-        );
-        currentUser.write(`[ ${username} ] > `);
-      } else {
-        currentUser.end(
-          chalk.red.bold('[ PagoPA Chatbot ] > Error: the name is not valid!\n')
-        );
-      }
+      this.addNewUser(message, currentUser, connectedUsers);
     } else {
-      Object.keys(connectedUsers).forEach(id => {
-        const otherUser = connectedUsers[id];
-        if (currentUser.id !== id) {
-          otherUser.write(`\n [ ${currentUser.name} ] > ${message}`);
-          otherUser.write(`[ ${otherUser.name} ] > `);
-        } else {
-          currentUser.write(`[ ${currentUser.name} ] > `);
-        }
-      });
+      this.deliverMessage(message, currentUser, connectedUsers);
     }
+  }
+
+  addNewUser(message, currentUser, connectedUsers) {
+    const username = message.trim();
+    currentUser.name = username;
+
+    if (username) {
+      connectedUsers[currentUser.id] = currentUser;
+
+      currentUser.write(
+        chalk.green(`[ PagoPA Chatbot ] > Welcome ${username}!\n`)
+      );
+      currentUser.write(`[ ${username} ] > `);
+    } else {
+      currentUser.end(
+        chalk.red.bold('[ PagoPA Chatbot ] > Error: the name is not valid!\n')
+      );
+    }
+  }
+
+  deliverMessage(message, currentUser, connectedUsers) {
+    Object.keys(connectedUsers).forEach(id => {
+      const otherUser = connectedUsers[id];
+      if (currentUser.id !== id) {
+        otherUser.write(`\n [ ${currentUser.name} ] > ${message}`);
+        otherUser.write(`[ ${otherUser.name} ] > `);
+      } else {
+        currentUser.write(`[ ${currentUser.name} ] > `);
+      }
+    });
   }
 
   stopServer() {
